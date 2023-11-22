@@ -47,6 +47,7 @@ android {
 }
 
 dependencies {
+    implementation(project(mapOf("path" to ":domain")))
 
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
@@ -63,5 +64,6 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
 }

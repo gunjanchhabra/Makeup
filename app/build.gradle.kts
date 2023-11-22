@@ -54,6 +54,8 @@ android {
 
 dependencies {
     implementation(project(mapOf("path" to ":products")))
+    implementation(project(mapOf("path" to ":data")))
+
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
