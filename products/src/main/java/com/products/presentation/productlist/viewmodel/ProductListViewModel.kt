@@ -1,9 +1,10 @@
 package com.products.presentation.productlist.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.domain.model.ProductDomainModel
 import com.domain.usecases.ProductListUseCase
 import com.products.presentation.base.BaseViewModel
+import com.products.presentation.mapper.ProductUiMapper
 import com.products.presentation.productlist.state.ProductListSideEffect
 import com.products.presentation.productlist.state.ProductListUiIntent
 import com.products.presentation.productlist.state.ProductListUiState
@@ -16,17 +17,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
-    private val productListUseCase: ProductListUseCase
+    private val productListUseCase: ProductListUseCase,
+    private val productUiMapper: ProductUiMapper
 ) : BaseViewModel<ProductListUiState, ProductListUiIntent, ProductListSideEffect>() {
 
     private val _productListUiState = MutableStateFlow<ProductListUiState>(Loading)
-    val productListUiState : StateFlow<ProductListUiState> = _productListUiState
+    val productListUiState: StateFlow<ProductListUiState> = _productListUiState
     override fun onEvent(uiIntent: ProductListUiIntent) {
         when (uiIntent) {
             is ProductListUiIntent.FetchProductList -> {
-              fetchProductList()
+                fetchProductList()
             }
-            else -> {
+            is ProductListUiIntent.OnProductItemClick ->{
 
             }
         }
@@ -34,16 +36,23 @@ class ProductListViewModel @Inject constructor(
 
     private fun fetchProductList() {
         viewModelScope.launch {
-        _productListUiState.value = Loading
+            _productListUiState.value = Loading
             productListUseCase()
                 .onSuccess {
-                    // TODO map domain model to ui model
-                    Log.d("Gunjan vm", it.size.toString())
-                    _productListUiState.value = Success(it)
+                    onResponseSuccess(it)
                 }
                 .onFailure {
-                    _productListUiState.value = Error(it.message ?: "Error")
+                    onResponseFailure(it)
                 }
         }
+    }
+
+    private fun onResponseFailure(it: Throwable) {
+        _productListUiState.value = Error(it.message ?: "Error")
+    }
+
+    private fun onResponseSuccess(it: List<ProductDomainModel>) {
+        _productListUiState.value =
+            Success(it.map { domainModel -> productUiMapper.map(domainModel) })
     }
 }

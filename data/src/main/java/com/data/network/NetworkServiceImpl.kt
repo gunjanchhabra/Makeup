@@ -12,15 +12,19 @@ class NetworkServiceImpl @Inject constructor(
 ) : NetworkService {
     override suspend fun fetchProductList() : Result<List<ProductDomainModel>> {
         val response = apiService.getProducts()
-        if (response.isSuccessful){
-            Log.d("Gunjan service", response.body().toString())
-            return Result.success(response.body()?.map { item -> mapper  map  item } ?: listOf())
+        return if (response.isSuccessful){
+            Result.success(response.body()?.map { item -> mapper  map  item } ?: listOf())
         }else{
-           return Result.failure(Throwable(response.message()))
+            Result.failure(Throwable(response.message()))
         }
     }
 
-    override fun fetchProductDetail() {
-        apiService.getProductDetail(1)
+    override fun fetchProductDetail(productId : Int) : Result<ProductDomainModel>{
+        val response = apiService.getProductDetail(productId)
+        return if (response.isSuccessful && response.body() != null){
+            Result.success(mapper map response.body()!!)
+        }else{
+            Result.failure(Throwable(""))
+        }
     }
 }

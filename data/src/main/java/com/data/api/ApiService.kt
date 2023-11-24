@@ -16,5 +16,5 @@ interface ApiService {
     suspend fun getProducts() : Response<List<ProductItemDto>>
 
     @GET(PRODUCT_DETAIL_API_ENDPOINT)
-    fun getProductDetail(@Path("id") id: Int)
+    fun getProductDetail(@Path("id") id: Int) : Response<ProductItemDto>
 }

@@ -4,5 +4,5 @@ import com.domain.model.ProductDomainModel
 
 interface ProductRepository {
     suspend fun fetchProductList() : Result<List<ProductDomainModel>>
-    fun fetchProductDetail()
+    fun fetchProductDetail(productId: Int) : Result<ProductDomainModel>
 }
