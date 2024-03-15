@@ -1,30 +1,31 @@
 package com.data.network
 
 import android.util.Log
+import com.data.api.ApiCall
 import com.data.api.ApiService
-import com.data.mapper.ProductDtoToDomainMapper
+import com.data.mapper.toDomainModel
 import com.domain.model.ProductDomainModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class NetworkServiceImpl @Inject constructor(
-    private val apiService: ApiService,
-    private val mapper: ProductDtoToDomainMapper
+    private val apiService: ApiService
 ) : NetworkService {
     override suspend fun fetchProductList() : Result<List<ProductDomainModel>> {
-        val response = apiService.getProducts()
-        return if (response.isSuccessful){
-            Result.success(response.body()?.map { item -> mapper  map  item } ?: listOf())
-        }else{
-            Result.failure(Throwable(response.message()))
-        }
+
+        return ApiCall(
+            apiCall = {apiService.getProducts()},
+            mapper = { it.map { item -> item.toDomainModel() } },
+            dispatcher = Dispatchers.IO
+        )
     }
 
-    override fun fetchProductDetail(productId : Int) : Result<ProductDomainModel>{
-        val response = apiService.getProductDetail(productId)
-        return if (response.isSuccessful && response.body() != null){
-            Result.success(mapper map response.body()!!)
-        }else{
-            Result.failure(Throwable(""))
-        }
+    override suspend fun fetchProductDetail(productId : Int) : Result<ProductDomainModel>{
+        return ApiCall(
+            apiCall = {apiService.getProductDetail(productId)},
+            mapper = { it.toDomainModel() },
+            dispatcher = Dispatchers.IO
+        )
     }
 }

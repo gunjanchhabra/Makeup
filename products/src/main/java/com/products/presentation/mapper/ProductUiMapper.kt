@@ -6,35 +6,29 @@ import com.products.presentation.model.ProductUiColor
 import com.products.presentation.model.ProductUiModel
 import javax.inject.Inject
 
-class ProductUiMapper @Inject constructor() {
-    infix fun map(domainModel: ProductDomainModel): ProductUiModel {
-        return ProductUiModel(
-            apiFeaturedImage = domainModel.apiFeaturedImage,
-            brand = domainModel.brand,
-            category = domainModel.category,
-            createdAt = domainModel.createdAt,
-            currency = domainModel.currency,
-            description = domainModel.description,
-            id = domainModel.id,
-            imageLink = domainModel.imageLink,
-            name = domainModel.name,
-            price = domainModel.price,
-            priceSign = domainModel.priceSign,
-            productApiUrl = domainModel.productApiUrl,
-            productColors = domainModel.productColors.map { this.mapColor(it) },
-            productLink = domainModel.productLink,
-            productType = domainModel.productType,
-            rating = domainModel.rating,
-            tagList = domainModel.tagList,
-            updatedAt = domainModel.updatedAt,
-            websiteLink = domainModel.websiteLink
-        )
-    }
+fun ProductDomainModel.toUiModel() = ProductUiModel(
+    apiFeaturedImage = this.apiFeaturedImage,
+    brand = this.brand,
+    category = this.category,
+    createdAt = this.createdAt,
+    currency = this.currency,
+    description = this.description,
+    id = this.id,
+    imageLink = this.imageLink,
+    name = this.name,
+    price = this.price,
+    priceSign = this.priceSign,
+    productApiUrl = this.productApiUrl,
+    productColors = this.productColors.map { it.toUiModel() },
+    productLink = this.productLink,
+    productType = this.productType,
+    rating = this.rating,
+    tagList = this.tagList,
+    updatedAt = this.updatedAt,
+    websiteLink = this.websiteLink
+)
 
-    private fun mapColor(productColor: ProductDomainColor): ProductUiColor {
-        return ProductUiColor(
-            colourName = productColor.colourName,
-            hexValue = productColor.hexValue
-        )
-    }
-}
+fun ProductDomainColor.toUiModel() = ProductUiColor(
+    colourName = this.colourName,
+    hexValue = this.hexValue
+)

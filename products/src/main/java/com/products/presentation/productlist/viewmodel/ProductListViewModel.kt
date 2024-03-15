@@ -1,16 +1,16 @@
 package com.products.presentation.productlist.viewmodel
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.domain.model.ProductDomainModel
 import com.domain.usecases.ProductListUseCase
-import com.products.presentation.base.BaseViewModel
-import com.products.presentation.mapper.ProductUiMapper
-import com.products.presentation.productlist.state.ProductListSideEffect
-import com.products.presentation.productlist.state.ProductListUiIntent
-import com.products.presentation.productlist.state.ProductListUiState
-import com.products.presentation.productlist.state.ProductListUiState.*
+import com.products.presentation.base.Mvi
+import com.products.presentation.mapper.toUiModel
+import com.products.presentation.productlist.state.ProductListMvi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,25 +18,19 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
     private val productListUseCase: ProductListUseCase,
-    private val productUiMapper: ProductUiMapper
-) : BaseViewModel<ProductListUiState, ProductListUiIntent, ProductListSideEffect>() {
+) : ViewModel(), Mvi<ProductListMvi.ProductListUiIntent, ProductListMvi.ProductListUiState, ProductListMvi.ProductListSideEffect> {
 
-    private val _productListUiState = MutableStateFlow<ProductListUiState>(Loading)
-    val productListUiState: StateFlow<ProductListUiState> = _productListUiState
-    override fun onEvent(uiIntent: ProductListUiIntent) {
-        when (uiIntent) {
-            is ProductListUiIntent.FetchProductList -> {
-                fetchProductList()
-            }
-            is ProductListUiIntent.OnProductItemClick ->{
+    private val _productListUiState = MutableStateFlow<ProductListMvi.ProductListUiState>(ProductListMvi.ProductListUiState.Loading)
+    override val uiState: StateFlow<ProductListMvi.ProductListUiState>
+        get() = _productListUiState
 
-            }
-        }
-    }
+    private val _productListSideEffect = MutableSharedFlow<ProductListMvi.ProductListSideEffect>()
+    override val uiSideEffect: SharedFlow<ProductListMvi.ProductListSideEffect>
+        get() = _productListSideEffect
 
     private fun fetchProductList() {
         viewModelScope.launch {
-            _productListUiState.value = Loading
+            _productListUiState.value = ProductListMvi.ProductListUiState.Loading
             productListUseCase()
                 .onSuccess {
                     onResponseSuccess(it)
@@ -48,11 +42,22 @@ class ProductListViewModel @Inject constructor(
     }
 
     private fun onResponseFailure(it: Throwable) {
-        _productListUiState.value = Error(it.message ?: "Error")
+        _productListUiState.value = ProductListMvi.ProductListUiState.Error(it.message ?: "Error")
     }
 
     private fun onResponseSuccess(it: List<ProductDomainModel>) {
         _productListUiState.value =
-            Success(it.map { domainModel -> productUiMapper.map(domainModel) })
+            ProductListMvi.ProductListUiState.Success(it.map { domainModel -> domainModel.toUiModel() })
+    }
+
+    override fun onSendIntent(uiIntent: ProductListMvi.ProductListUiIntent) {
+        when(uiIntent){
+            ProductListMvi.ProductListUiIntent.FetchProductList -> fetchProductList()
+            is ProductListMvi.ProductListUiIntent.OnProductItemClick -> {
+                viewModelScope.launch {
+                    _productListSideEffect.emit(ProductListMvi.ProductListSideEffect.NavigateToDetailScreen(uiIntent.productId))
+                }
+            }
+        }
     }
 }

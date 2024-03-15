@@ -13,8 +13,8 @@ interface ApiService {
     }
 
     @GET(PRODUCT_API_ENDPOINT)
-    suspend fun getProducts() : Response<List<ProductItemDto>>
+    suspend fun getProducts() : List<ProductItemDto>
 
     @GET(PRODUCT_DETAIL_API_ENDPOINT)
-    fun getProductDetail(@Path("id") id: Int) : Response<ProductItemDto>
+    fun getProductDetail(@Path("id") id: Int) : ProductItemDto
 }

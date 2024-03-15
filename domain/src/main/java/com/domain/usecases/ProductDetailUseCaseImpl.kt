@@ -7,7 +7,7 @@ import javax.inject.Inject
 class ProductDetailUseCaseImpl @Inject constructor(
     private val productRepository: ProductRepository
 ) : ProductDetailUseCase{
-    override fun invoke(productId : Int) : Result<ProductDomainModel>{
+    override suspend fun invoke(productId : Int) : Result<ProductDomainModel>{
        return productRepository.fetchProductDetail(productId)
     }
 }
