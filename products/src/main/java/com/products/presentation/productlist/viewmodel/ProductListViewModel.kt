@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.domain.model.ProductDomainModel
 import com.domain.usecases.ProductListUseCase
-import com.products.presentation.base.Mvi
 import com.products.presentation.mapper.toUiModel
 import com.products.presentation.productlist.state.ProductListMvi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
     private val productListUseCase: ProductListUseCase,
-) : ViewModel(), Mvi<ProductListMvi.ProductListUiIntent, ProductListMvi.ProductListUiState, ProductListMvi.ProductListSideEffect> {
+) : ViewModel(), ProductListMvi {
 
     private val _productListUiState = MutableStateFlow<ProductListMvi.ProductListUiState>(ProductListMvi.ProductListUiState.Loading)
     override val uiState: StateFlow<ProductListMvi.ProductListUiState>
