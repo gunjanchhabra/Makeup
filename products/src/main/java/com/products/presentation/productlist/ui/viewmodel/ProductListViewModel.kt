@@ -1,4 +1,4 @@
-package com.products.presentation.productlist.viewmodel
+package com.products.presentation.productlist.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,19 +13,25 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class ProductListViewModel @Inject constructor(
     private val productListUseCase: ProductListUseCase,
 ) : ViewModel(), ProductListMvi {
 
-    private val _productListUiState = MutableStateFlow<ProductListMvi.ProductListUiState>(ProductListMvi.ProductListUiState.Loading)
+    private val _productListUiState =
+        MutableStateFlow<ProductListMvi.ProductListUiState>(ProductListMvi.ProductListUiState.Loading)
     override val uiState: StateFlow<ProductListMvi.ProductListUiState>
         get() = _productListUiState
 
     private val _productListSideEffect = MutableSharedFlow<ProductListMvi.ProductListSideEffect>()
     override val uiSideEffect: SharedFlow<ProductListMvi.ProductListSideEffect>
         get() = _productListSideEffect
+
+    init {
+        onSendIntent(
+            ProductListMvi.ProductListUiIntent.FetchProductList
+        )
+    }
 
     private fun fetchProductList() {
         viewModelScope.launch {
@@ -50,11 +56,15 @@ class ProductListViewModel @Inject constructor(
     }
 
     override fun onSendIntent(uiIntent: ProductListMvi.ProductListUiIntent) {
-        when(uiIntent){
+        when (uiIntent) {
             ProductListMvi.ProductListUiIntent.FetchProductList -> fetchProductList()
             is ProductListMvi.ProductListUiIntent.OnProductItemClick -> {
                 viewModelScope.launch {
-                    _productListSideEffect.emit(ProductListMvi.ProductListSideEffect.NavigateToDetailScreen(uiIntent.productId))
+                    _productListSideEffect.emit(
+                        ProductListMvi.ProductListSideEffect.NavigateToDetailScreen(
+                            uiIntent.productId
+                        )
+                    )
                 }
             }
         }

@@ -30,7 +30,6 @@ class ApiModule {
             .baseUrl(BuildConfig.BASE_URL)
             .build()
     }
-
     @Singleton
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService {

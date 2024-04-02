@@ -11,7 +11,6 @@ class ProductRepositoryImpl @Inject constructor(
     override suspend fun fetchProductList() : Result<List<ProductDomainModel>>{
        return networkService.fetchProductList()
     }
-
     override suspend fun fetchProductDetail(productId: Int) : Result<ProductDomainModel>{
         return networkService.fetchProductDetail(productId)
     }

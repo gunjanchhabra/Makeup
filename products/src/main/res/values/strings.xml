@@ -1,0 +1,5 @@
+<resources>
+    <string name="products">Products</string>
+    <string name="products_detail">Products Detail</string>
+    <string name="description">Description</string>
+</resources>
