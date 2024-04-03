@@ -3,7 +3,7 @@ package com.data.api
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-suspend fun <T, R> ApiCall(
+suspend fun <T, R> apiCall(
     apiCall : suspend () -> T,
     mapper : (T) -> R,
     dispatcher : CoroutineDispatcher

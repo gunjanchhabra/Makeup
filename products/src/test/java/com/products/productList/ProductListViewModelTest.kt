@@ -13,7 +13,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -26,18 +25,13 @@ class ProductListViewModelTest {
     @get:Rule
     var dispatcher = Dispatcher()
 
-//    @Before
-//    fun setup() {
-//        viewModel = ProductListViewModel(useCase)
-//    }
-
     @Test
     fun `fetchProductList should update state correctly on success`() = runTest {
         val successResponse = Result.success(mutableListOf(productDomainModel))
         coEvery { useCase() } answers { successResponse }
         viewModel = ProductListViewModel(useCase)
         with(viewModel) {
-            onSendIntent(ProductListMvi.ProductListUiIntent.FetchProductList)
+            sendIntent(ProductListMvi.ProductListUiIntent.FetchProductList)
 
             uiState.test {
                 Assert.assertTrue(awaitItem() is ProductListMvi.ProductListUiState.Success)
@@ -53,23 +47,11 @@ class ProductListViewModelTest {
         coEvery { useCase() } answers { response }
         viewModel = ProductListViewModel(useCase)
         with(viewModel) {
-            onSendIntent(ProductListMvi.ProductListUiIntent.FetchProductList)
+            sendIntent(ProductListMvi.ProductListUiIntent.FetchProductList)
             uiState.test {
                 Assert.assertTrue(awaitItem() is ProductListMvi.ProductListUiState.Error)
             }
         }
     }
-
-//    @Test
-//    fun `navigate to details screen when OnProductItemClick intent passed`() =
-//        runTest {
-//            with(viewModel) {
-//                uiSideEffect.test {
-//                    onSendIntent(ProductListMvi.ProductListUiIntent.OnProductItemClick(
-//                        productDomainModel.id))
-//                    Assert.assertTrue(awaitItem() is ProductListMvi.ProductListSideEffect.NavigateToDetailScreen)
-//                }
-//            }
-//        }
 
 }

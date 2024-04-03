@@ -28,7 +28,7 @@ class ProductListViewModel @Inject constructor(
         get() = _productListSideEffect
 
     init {
-        onSendIntent(
+        sendIntent(
             ProductListMvi.ProductListUiIntent.FetchProductList
         )
     }
@@ -55,7 +55,7 @@ class ProductListViewModel @Inject constructor(
             ProductListMvi.ProductListUiState.Success(it.map { domainModel -> domainModel.toUiModel() })
     }
 
-    override fun onSendIntent(uiIntent: ProductListMvi.ProductListUiIntent) {
+    override fun sendIntent(uiIntent: ProductListMvi.ProductListUiIntent) {
         when (uiIntent) {
             ProductListMvi.ProductListUiIntent.FetchProductList -> fetchProductList()
             is ProductListMvi.ProductListUiIntent.OnProductItemClick -> {

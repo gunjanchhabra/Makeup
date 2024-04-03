@@ -36,7 +36,7 @@ class ProductDetailViewModelTest {
 
         coEvery { useCase(productId) } answers { response }
         with(viewModel) {
-            onSendIntent(ProductDetailMvi.ProductDetailUiIntent.FetchProductDetail(productId))
+            sendIntent(ProductDetailMvi.ProductDetailUiIntent.FetchProductDetail(productId))
 
             uiState.test {
                 Assert.assertTrue(awaitItem() is ProductDetailMvi.ProductDetailUiState.Success)
@@ -53,7 +53,7 @@ class ProductDetailViewModelTest {
         coEvery { useCase(productId) } answers { response }
 
         with(viewModel) {
-            onSendIntent(ProductDetailMvi.ProductDetailUiIntent.FetchProductDetail(productId))
+            sendIntent(ProductDetailMvi.ProductDetailUiIntent.FetchProductDetail(productId))
 
             uiState.test {
                 Assert.assertTrue(awaitItem() is ProductDetailMvi.ProductDetailUiState.Error)

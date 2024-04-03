@@ -25,7 +25,7 @@ fun ProductDetailComponent(productId: Int) {
     val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit, block = {
-        viewModel.onSendIntent(
+        viewModel.sendIntent(
             ProductDetailMvi.ProductDetailUiIntent.FetchProductDetail(productId)
         )
     })

@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface Mvi<UiIntent, UiState, UiSideEffect >{
-    fun onSendIntent(uiIntent: UiIntent)
+    fun sendIntent(uiIntent: UiIntent)
 
     val uiState : StateFlow<UiState>
 

@@ -29,7 +29,7 @@ class ProductDetailViewModel @Inject constructor(
     override val uiSideEffect: SharedFlow<ProductDetailMvi.ProductDetailSideEffect>
         get() = _productDetailSideEffect.asSharedFlow()
 
-    override fun onSendIntent(uiIntent: ProductDetailMvi.ProductDetailUiIntent) {
+    override fun sendIntent(uiIntent: ProductDetailMvi.ProductDetailUiIntent) {
         if(uiIntent is ProductDetailMvi.ProductDetailUiIntent.FetchProductDetail){
             fetchProductDetail(uiIntent.productId)
         }
